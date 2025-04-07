@@ -1,16 +1,21 @@
 {
   "name": "tiny-pinyin-next",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "汉字转拼音",
   "author": "virjay",
   "license": "ISC",
+  "homepage": "https://github.com/coder-virjay/tiny-pinyin?#tiny-pinyin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coder-virjay/tiny-pinyin.git"
+  },
   "keywords": [
     "汉字转拼音",
     "汉字",
     "拼音",
     "pinyin"
   ],
-  "main": "dist/index.js",
+  "main": "src/index.ts",
   "scripts": {
     "dev": "cd demo && npm run dev",
     "build": "npx tsc",

@@ -20,22 +20,22 @@ npm install tiny-pinyin
 ### 基本用法
 
 ```js
-import PinYin from 'tiny-pinyin'
+import { getFirstLetter, getPinyin } from 'tiny-pinyin-next'
 
 // 获取汉字的拼音
-PinYin.getPinyin('你好') // ['nihao']
+getPinyin('你好') // ['nihao']
 
 // 获取拼音首字母
-PinYin.getFirstLetter('你好') // ['nh']
+getFirstLetter('你好') // ['nh']
 ```
 
 ### 多音字处理
 
 ```js
-import PinYin from 'tiny-pinyin'
+import { getPinyin } from 'tiny-pinyin'
 
 // 处理多音字，返回所有可能的组合
-const pinyinCombinations = PinYin.getPinyin('重庆')
+const pinyinCombinations = getPinyin('重庆')
 console.log(pinyinCombinations) // 返回所有可能的拼音组合: [ "chongqing", "zhongqing" ]
 ```
 
