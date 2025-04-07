@@ -2,14 +2,14 @@ import dictNotoneOrigin from './dict/pinyinDict'
 
 // 把字典 {[拼音]: [汉字]} 转换为 {[汉字]: [拼音]}
 const dictNotone: Record<string, string[]> = {}
-for (const i in dictNotoneOrigin) {
-  const temp = dictNotoneOrigin[i]
-  for (let j = 0, len = temp.length; j < len; j++) {
-    if (!dictNotone[temp[j]]) {
-      dictNotone[temp[j]] = [i]
+for (const pinyin in dictNotoneOrigin) {
+  const characters = dictNotoneOrigin[pinyin]
+  for (let charIndex = 0, charCount = characters.length; charIndex < charCount; charIndex++) {
+    if (!dictNotone[characters[charIndex]]) {
+      dictNotone[characters[charIndex]] = [pinyin]
     }
     else {
-      dictNotone[temp[j]].push(i)
+      dictNotone[characters[charIndex]].push(pinyin)
     }
   }
 }
@@ -24,27 +24,27 @@ function generateCombinations(arrays: string[][]): string[] {
     return arrays[0]
 
   // 结果数组
-  const result: string[] = []
+  const combinations: string[] = []
 
   // 递归生成组合
-  function combine(currentIndex: number, currentCombination: string): void {
+  function combine(arrayIndex: number, currentString: string): void {
     // 如果已经处理完所有数组，将当前组合加入结果
-    if (currentIndex === arrays.length) {
-      result.push(currentCombination)
+    if (arrayIndex === arrays.length) {
+      combinations.push(currentString)
       return
     }
 
     // 遍历当前数组的每个元素
-    for (const element of arrays[currentIndex]) {
+    for (const item of arrays[arrayIndex]) {
       // 将当前元素添加到组合中，并继续处理下一个数组
-      combine(currentIndex + 1, currentCombination + element)
+      combine(arrayIndex + 1, currentString + item)
     }
   }
 
   // 从第一个数组开始组合
   combine(0, '')
 
-  return result
+  return combinations
 }
 
 /**
@@ -54,19 +54,19 @@ function generateCombinations(arrays: string[][]): string[] {
 export function getPinyin(chinese: string) {
   if (!chinese || /^ +$/.test(chinese))
     return ''
-  const result: string[][] = []
+  const pinyinArrays: string[][] = []
 
-  for (let i = 0, len = chinese.length; i < len; i++) {
-    const temp = chinese.charAt(i)
-    const pinyin = dictNotone[temp]
-    if (pinyin) {
-      result.push(pinyin)
+  for (let charIndex = 0, textLength = chinese.length; charIndex < textLength; charIndex++) {
+    const currentChar = chinese.charAt(charIndex)
+    const possiblePinyins = dictNotone[currentChar]
+    if (possiblePinyins) {
+      pinyinArrays.push(possiblePinyins)
     }
     else {
-      result.push([temp])
+      pinyinArrays.push([currentChar])
     }
   }
-  return generateCombinations(result)
+  return generateCombinations(pinyinArrays)
 }
 
 /**
@@ -77,25 +77,20 @@ export function getFirstLetter(str: string) {
   if (!str || /^ +$/.test(str))
     return ''
 
-  const result: string[][] = []
-  for (let i = 0; i < str.length; i++) {
-    const unicode = str.charCodeAt(i)
-    const ch = str.charAt(i)
-    if (unicode >= 19968 && unicode <= 40869) {
-      const singleTextLetter: string[] = []
-      for (const key in dictNotoneOrigin) {
-        if (dictNotoneOrigin[key].includes(ch)) {
-          singleTextLetter.push(key[0])
-        }
-      }
-      result.push(singleTextLetter)
+  const pinyinArrays: string[][] = []
+  for (let charIndex = 0; charIndex < str.length; charIndex++) {
+    const charCode = str.charCodeAt(charIndex)
+    const currentChar = str.charAt(charIndex)
+    // 检查字符是否在中文Unicode范围内（CJK统一汉字）
+    if (charCode >= 19968 && charCode <= 40869) {
+      pinyinArrays.push(dictNotone[currentChar].map(pinyin => pinyin.charAt(0)))
     }
     else {
-      result.push([ch])
+      pinyinArrays.push([currentChar])
     }
   }
 
-  const combinations = generateCombinations(result)
+  const combinations = generateCombinations(pinyinArrays)
 
   return combinations
 }
