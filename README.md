@@ -32,7 +32,7 @@ getFirstLetter('你好') // ['nh']
 ### 多音字处理
 
 ```js
-import { getPinyin } from 'tiny-pinyin'
+import { getPinyin } from 'tiny-pinyin-next'
 
 // 处理多音字，返回所有可能的组合
 const pinyinCombinations = getPinyin('重庆')
