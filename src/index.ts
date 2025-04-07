@@ -53,7 +53,7 @@ function generateCombinations(arrays: string[][]): string[] {
  */
 export function getPinyin(chinese: string) {
   if (!chinese || /^ +$/.test(chinese))
-    return ''
+    return []
   const pinyinArrays: string[][] = []
 
   for (let charIndex = 0, textLength = chinese.length; charIndex < textLength; charIndex++) {
@@ -75,7 +75,7 @@ export function getPinyin(chinese: string) {
  */
 export function getFirstLetter(str: string) {
   if (!str || /^ +$/.test(str))
-    return ''
+    return []
 
   const pinyinArrays: string[][] = []
   for (let charIndex = 0; charIndex < str.length; charIndex++) {
