@@ -1,4 +1,4 @@
-import dictNotoneOrigin from './dict/pinyinDict'
+const dictNotoneOrigin = globalThis.pinyinDict
 
 // 把字典 {[拼音]: [汉字]} 转换为 {[汉字]: [拼音]}
 const dictNotone: Record<string, string[]> = {}
@@ -82,7 +82,7 @@ export function getFirstLetter(str: string) {
     const charCode = str.charCodeAt(charIndex)
     const currentChar = str.charAt(charIndex)
     // 检查字符是否在中文Unicode范围内（CJK统一汉字）
-    if (charCode >= 19968 && charCode <= 40869) {
+    if (charCode >= 19968 && charCode <= 40869 && dictNotone[currentChar]) {
       pinyinArrays.push(dictNotone[currentChar].map(pinyin => pinyin.charAt(0)))
     }
     else {
