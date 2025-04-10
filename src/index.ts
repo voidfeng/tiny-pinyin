@@ -1,4 +1,8 @@
-const dictNotoneOrigin = globalThis.pinyinDict
+interface GlobalThis {
+  pinyinDict: Record<string, string>
+}
+
+const dictNotoneOrigin = (globalThis as unknown as GlobalThis).pinyinDict
 
 // 把字典 {[拼音]: [汉字]} 转换为 {[汉字]: [拼音]}
 const dictNotone: Record<string, string[]> = {}
