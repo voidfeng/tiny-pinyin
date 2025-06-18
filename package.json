@@ -1,13 +1,13 @@
 {
   "name": "tiny-pinyin-next",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "汉字转拼音",
   "author": "virjay",
   "license": "ISC",
-  "homepage": "https://github.com/coder-virjay/tiny-pinyin?#tiny-pinyin",
+  "homepage": "https://github.com/varjay/tiny-pinyin?#tiny-pinyin",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/coder-virjay/tiny-pinyin.git"
+    "url": "git+https://github.com/varjay/tiny-pinyin.git"
   },
   "keywords": [
     "汉字转拼音",

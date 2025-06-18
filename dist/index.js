@@ -1,21 +1,18 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPinyin = getPinyin;
 exports.getFirstLetter = getFirstLetter;
-var pinyinDict_1 = __importDefault(require("./dict/pinyinDict"));
+var dictNotoneOrigin = globalThis.pinyinDict;
 // 把字典 {[拼音]: [汉字]} 转换为 {[汉字]: [拼音]}
 var dictNotone = {};
-for (var i in pinyinDict_1.default) {
-    var temp = pinyinDict_1.default[i];
-    for (var j = 0, len = temp.length; j < len; j++) {
-        if (!dictNotone[temp[j]]) {
-            dictNotone[temp[j]] = [i];
+for (var pinyin in dictNotoneOrigin) {
+    var characters = dictNotoneOrigin[pinyin];
+    for (var charIndex = 0, charCount = characters.length; charIndex < charCount; charIndex++) {
+        if (!dictNotone[characters[charIndex]]) {
+            dictNotone[characters[charIndex]] = [pinyin];
         }
         else {
-            dictNotone[temp[j]].push(i);
+            dictNotone[characters[charIndex]].push(pinyin);
         }
     }
 }
@@ -27,24 +24,24 @@ function generateCombinations(arrays) {
     if (arrays.length === 1)
         return arrays[0];
     // 结果数组
-    var result = [];
+    var combinations = [];
     // 递归生成组合
-    function combine(currentIndex, currentCombination) {
+    function combine(arrayIndex, currentString) {
         // 如果已经处理完所有数组，将当前组合加入结果
-        if (currentIndex === arrays.length) {
-            result.push(currentCombination);
+        if (arrayIndex === arrays.length) {
+            combinations.push(currentString);
             return;
         }
         // 遍历当前数组的每个元素
-        for (var _i = 0, _a = arrays[currentIndex]; _i < _a.length; _i++) {
-            var element = _a[_i];
+        for (var _i = 0, _a = arrays[arrayIndex]; _i < _a.length; _i++) {
+            var item = _a[_i];
             // 将当前元素添加到组合中，并继续处理下一个数组
-            combine(currentIndex + 1, currentCombination + element);
+            combine(arrayIndex + 1, currentString + item);
         }
     }
     // 从第一个数组开始组合
     combine(0, '');
-    return result;
+    return combinations;
 }
 /**
  * 根据汉字获取拼音，如果不是汉字直接返回原字符
@@ -52,19 +49,19 @@ function generateCombinations(arrays) {
  */
 function getPinyin(chinese) {
     if (!chinese || /^ +$/.test(chinese))
-        return '';
-    var result = [];
-    for (var i = 0, len = chinese.length; i < len; i++) {
-        var temp = chinese.charAt(i);
-        var pinyin = dictNotone[temp];
-        if (pinyin) {
-            result.push(pinyin);
+        return [];
+    var pinyinArrays = [];
+    for (var charIndex = 0, textLength = chinese.length; charIndex < textLength; charIndex++) {
+        var currentChar = chinese.charAt(charIndex);
+        var possiblePinyins = dictNotone[currentChar];
+        if (possiblePinyins) {
+            pinyinArrays.push(possiblePinyins);
         }
         else {
-            result.push([temp]);
+            pinyinArrays.push([currentChar]);
         }
     }
-    return generateCombinations(result);
+    return generateCombinations(pinyinArrays);
 }
 /**
  * 获取汉字的拼音首字母
@@ -72,24 +69,19 @@ function getPinyin(chinese) {
  */
 function getFirstLetter(str) {
     if (!str || /^ +$/.test(str))
-        return '';
-    var result = [];
-    for (var i = 0; i < str.length; i++) {
-        var unicode = str.charCodeAt(i);
-        var ch = str.charAt(i);
-        if (unicode >= 19968 && unicode <= 40869) {
-            var singleTextLetter = [];
-            for (var key in pinyinDict_1.default) {
-                if (pinyinDict_1.default[key].includes(ch)) {
-                    singleTextLetter.push(key[0]);
-                }
-            }
-            result.push(singleTextLetter);
+        return [];
+    var pinyinArrays = [];
+    for (var charIndex = 0; charIndex < str.length; charIndex++) {
+        var charCode = str.charCodeAt(charIndex);
+        var currentChar = str.charAt(charIndex);
+        // 检查字符是否在中文Unicode范围内（CJK统一汉字）
+        if (charCode >= 19968 && charCode <= 40869 && dictNotone[currentChar]) {
+            pinyinArrays.push(dictNotone[currentChar].map(function (pinyin) { return pinyin.charAt(0); }));
         }
         else {
-            result.push([ch]);
+            pinyinArrays.push([currentChar]);
         }
     }
-    var combinations = generateCombinations(result);
+    var combinations = generateCombinations(pinyinArrays);
     return combinations;
 }
