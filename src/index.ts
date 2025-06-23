@@ -81,20 +81,20 @@ export function getFirstLetter(str: string) {
   if (!str || /^ +$/.test(str))
     return []
 
-  const pinyinArrays: string[][] = []
+  const pinyinArrays: Set<string>[] = []
   for (let charIndex = 0; charIndex < str.length; charIndex++) {
     const charCode = str.charCodeAt(charIndex)
     const currentChar = str.charAt(charIndex)
     // 检查字符是否在中文Unicode范围内（CJK统一汉字）
     if (charCode >= 19968 && charCode <= 40869 && dictNotone[currentChar]) {
-      pinyinArrays.push(dictNotone[currentChar].map(pinyin => pinyin.charAt(0)))
+      pinyinArrays.push(new Set(dictNotone[currentChar].map(pinyin => pinyin.charAt(0))))
     }
     else {
-      pinyinArrays.push([currentChar])
+      pinyinArrays.push(new Set([currentChar]))
     }
   }
 
-  const combinations = generateCombinations(pinyinArrays)
+  const combinations = generateCombinations(pinyinArrays.map(pinyinSet => Array.from(pinyinSet)))
 
   return combinations
 }
