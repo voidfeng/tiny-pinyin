@@ -1,0 +1,63 @@
+# 工作流名称
+name: Build and Deploy to GitHub Pages
+
+# 触发条件：在 push 到 main 分支时触发
+on:
+  push:
+    branches: [main] # 如果你的主分支是 master，请改为 master
+
+# 允许此工作流拥有写入 gh-pages 分支的权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 作业
+jobs:
+  build-and-deploy:
+    # 作业环境
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # 运行环境
+    runs-on: ubuntu-latest
+
+    # 步骤
+    steps:
+      # 1. Checkout 代码
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. 设置 Node.js 环境
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22 # 建议使用你项目兼容的 LTS 版本
+          cache: npm # 如果你使用 pnpm 或 yarn，请改为对应的值
+
+      # 3. 安装依赖
+      - name: Install dependencies
+        run: npm install # 如果你使用 pnpm，请改为 pnpm install；yarn 则为 yarn install
+
+      # 4. 构建项目
+      #    CI=false 是为了防止在某些CI环境中将警告视为错误而中断构建
+      - name: Build
+        run: npm run build
+        env:
+          CI: false
+
+      # 5. 配置 GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 6. 上传构建产物
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Vite 构建的输出目录默认为 dist
+          path: ./dist
+
+      # 7. 部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
