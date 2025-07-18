@@ -18,7 +18,7 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "cd demo && npm run dev",
-    "build": "npx tsc && cd demo && npm run build",
+    "build": "npx tsc && cd demo && npm install && npm run build",
     "test": "jest",
     "lint": "eslint . --ext .ts --fix"
   },
