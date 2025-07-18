@@ -11,6 +11,7 @@ node_modules
 .DS_Store
 .cursor
 dist-*
+dist/demo
 coverage
 *.local
 
